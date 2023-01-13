@@ -181,7 +181,11 @@ ifneq ($(VM_PARALLEL_BUILDS),1)
 
   VK_OBJS += $(VM_PREFIX)__ALL.o
   $(VM_PREFIX)__ALL.cpp: $(addsuffix .cpp, $(VM_FAST) $(VM_SLOW))
+ifeq ($(VM_INCLUDE_ALL_CPP),1)
+	$(VERILATOR_INCLUDER) -DVL_INCLUDE_OPT=include . > $@
+else
 	$(VERILATOR_INCLUDER) -DVL_INCLUDE_OPT=include $^ > $@
+endif
   all_cpp: $(VM_PREFIX)__ALL.cpp
 else
   # Parallel build: Each .cpp file by itself. This can be somewhat slower for
@@ -294,6 +298,7 @@ debug-make::
 	@echo OPT_SLOW: $(OPT_SLOW)
 	@echo VM_PREFIX:  $(VM_PREFIX)
 	@echo VM_PARALLEL_BUILDS:  $(VM_PARALLEL_BUILDS)
+	@echo VM_INCLUDE_ALL_CPP:  $(VM_INCLUDE_ALL_CPP)
 	@echo VM_CLASSES_FAST: $(VM_CLASSES_FAST)
 	@echo VM_CLASSES_SLOW: $(VM_CLASSES_SLOW)
 	@echo VM_SUPPORT_FAST: $(VM_SUPPORT_FAST)
